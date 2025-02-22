@@ -1,4 +1,4 @@
-CC := gcc
+CC ?= gcc
 CFLAGS := -g -Og
 LIB_NAME := toy
 STATIC_LIB := lib$(LIB_NAME).a
@@ -17,6 +17,9 @@ $(LIB_OBJ): $(LIB_SRC)
 $(STATIC_LIB): $(LIB_OBJ)
 	ar -rs $@ $^
 
+$(DYNAMIC_LIB): $(LIB_OBJ)
+	$(CC) $(CFLAGS) -shared -o $(DYNAMIC_LIB) $(LIB_OBJ)
+
 $(MAIN_OBJ): $(MAIN_SRC)
 	$(CC) $(CFLAGS) $^ -c -o $@
 
@@ -27,11 +30,10 @@ dynamic-lib: $(DYNAMIC_LIB)
 static-main: $(MAIN_OBJ) $(STATIC_LIB)
 	$(CC) $(CFLAGS) -o $(MAIN_EXE) $^
 
-$(DYNAMIC_LIB): $(LIB_OBJ)
-	$(CC) $(CFLAGS) -shared -o $(DYNAMIC_LIB) $(LIB_OBJ)
-
 dynamic-main: $(MAIN_OBJ) $(DYNAMIC_LIB)
 	$(CC) $(CFLAGS) -o $(MAIN_EXE) $^
 
 clean:
 	rm $(MAIN_EXE) $(MAIN_OBJ) $(LIB_OBJ) $(STATIC_LIB) $(DYNAMIC_LIB) -rf
+
+.PHONY: clean static-lib static-main dynamic-lib dynamic-main
