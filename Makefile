@@ -1,39 +1,33 @@
-CC ?= gcc
-CFLAGS := -g -Og
-LIB_NAME := toy
-STATIC_LIB := lib$(LIB_NAME).a
-DYNAMIC_LIB := lib$(LIB_NAME).so
+toy.o: toy.c
+	gcc toy.c -g -Og -c -fpic -o toy.o
 
-MAIN_SRC := main.c
-MAIN_OBJ := main.o
-MAIN_EXE := range_sum
+libtoy.a: toy.o
+	ar -rs libtoy.a toy.o
 
-LIB_SRC := toy.c
-LIB_OBJ := toy.o
+libtoy.so: toy.o
+	gcc -g -Og -shared -o libtoy.so toy.o
 
-$(LIB_OBJ): $(LIB_SRC)
-	$(CC) $(CFLAGS) $^ -c -fpic -o $@
+main.o: main.c
+	gcc main.c -g -Og -c -o main.o
 
-$(STATIC_LIB): $(LIB_OBJ)
-	ar -rs $@ $^
+range_sum_d: main.o libtoy.so
+	gcc -g -Og -o range_sum_d main.o libtoy.so
 
-$(DYNAMIC_LIB): $(LIB_OBJ)
-	$(CC) $(CFLAGS) -shared -o $(DYNAMIC_LIB) $(LIB_OBJ)
+range_sum_s: main.o libtoy.a
+	gcc -g -Og -o range_sum_s main.o libtoy.a
 
-$(MAIN_OBJ): $(MAIN_SRC)
-	$(CC) $(CFLAGS) $^ -c -o $@
+static-lib: libtoy.a
 
-static-lib: $(STATIC_LIB)
+dynamic-lib: libtoy.so
 
-dynamic-lib: $(DYNAMIC_LIB)
+static-main: range_sum_s
 
-static-main: $(MAIN_OBJ) $(STATIC_LIB)
-	$(CC) $(CFLAGS) -o $(MAIN_EXE) $^
+dynamic-main: range_sum_d
 
-dynamic-main: $(MAIN_OBJ) $(DYNAMIC_LIB)
-	$(CC) $(CFLAGS) -o $(MAIN_EXE) $^
+gdb: range_sum_s
+	gdb --args range_sum_s 0 9
 
 clean:
-	rm $(MAIN_EXE) $(MAIN_OBJ) $(LIB_OBJ) $(STATIC_LIB) $(DYNAMIC_LIB) -rf
+	rm range_sum_d range_sum_s libtoy.so libtoy.a toy.o main.o -rf
 
 .PHONY: clean static-lib static-main dynamic-lib dynamic-main
