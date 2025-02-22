@@ -6,7 +6,7 @@ DYNAMIC_LIB := lib$(LIB_NAME).so
 
 MAIN_SRC := main.c
 MAIN_OBJ := main.o
-MAIN_EXE := main
+MAIN_EXE := range_sum
 
 LIB_SRC := toy.c
 LIB_OBJ := toy.o
