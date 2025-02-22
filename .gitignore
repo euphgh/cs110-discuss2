@@ -1,0 +1,4 @@
+*.o
+range_sum_*
+*.a
+*.so
