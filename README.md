@@ -1,11 +1,11 @@
 # CS110 Discussion2 for Spring Semester 2025
 
 This repository contains the source code used in the discussion sessions
+new line
 
 ## Usage 
-There are six Makefile phony target you can use
 
-- generate static lib: libtoy.a 
+- generate static lib: hello
 ```bash
 make static-lib 
 ```
